@@ -11,10 +11,10 @@
 
 ## 📦 Installation
 
-Simply place the library into your game’s `ReplicatedStorage` or `ServerScriptService` and require it in your scripts.
+Simply place the library into your game’s `ReplicatedStorage` or `ServerScriptService` and require the `Net_Object` in your scripts.
 
 ```lua
-local netInterface = require(ReplicatedStorage:WaitForChild("Networking_Lib"))
+local netInterface = require(ReplicatedStorage.Networking_Lib.Net_Object)
 ```
 
 ## 🛠️ Usage
