@@ -1,6 +1,6 @@
-# 🖧 Roblox Networking Library
+# 🖧 netInterface
 
-**Roblox Networking Library** is a powerful, **easy-to-use networking solution** for handling **client-server communication** in Roblox games. This library provides a seamless way to create, manage, and interact with remote events between the client and server, making it **simple and efficient** to pass data between both ends.
+**netInterface** is a powerful, **easy-to-use networking solution** for handling **client-server communication** in Roblox games. This library provides a seamless way to create, manage, and interact with remote events between the client and server, making it **simple and efficient** to pass data between both ends.
 
 ## 🚀 Features
 
