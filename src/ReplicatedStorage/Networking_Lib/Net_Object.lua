@@ -11,14 +11,18 @@ local Connector = Networking_Lib.Connector
 -- Define the type for netInterfaceType
 export type netInterfaceType = {
 	__index: netInterfaceType,
+	
 	new: (name: string) -> netInterfaceType,
 	get: (name: string) -> netInterfaceType?,
-	fireServer: (self: netInterfaceType, ... any) -> nil,
-	fireClient: (self: netInterfaceType, client : Player, ... any) -> nil,
-	fireAllClients: (self: netInterfaceType, ... any) -> nil,
-	onServer: (self: netInterfaceType, () -> any?) -> any?,
-	onClient: (self: netInterfaceType, () -> any?) -> any?,
-	Destroy: (self: netInterfaceType) -> nil,
+	
+	fireServer: (self: netInterfaceType, ... any) -> (),
+	fireClient: (self: netInterfaceType, client : Player, ... any) -> (),
+	fireAllClients: (self: netInterfaceType, ... any) -> (),
+	
+	onServer: (self: netInterfaceType, () -> any?) -> (),
+	onClient: (self: netInterfaceType, () -> any?) -> (),
+	
+	Destroy: (self: netInterfaceType) -> (),
 	name: string,
 	remote : RemoteEvent,
 }
@@ -65,34 +69,29 @@ end
 
 function netInterface:fireServer(...)
 	self.remote:FireServer(...)
-	return nil
 end
 
 function netInterface:fireClient(client, ...)
 	self.remote:FireClient(client, ...)
-	return nil
 end
 
 function netInterface:fireAllClients(...)
 	self.remote:FireAllClients(...)
-	return nil
 end
 
 function netInterface:Destroy()
 	self.remote:Destroy()
 	netContent[self.name] = nil
-	return nil
 end
 
 function netInterface:onServer(callback)
 	if RunService:IsClient() then warn("netInterface.onServer() should be used only on the server! Please use netInterface.onClient()") return end
 	self.remote.OnServerEvent:Connect(callback)
-	return nil
 end
 
 function netInterface:onClient(callback)
 	if RunService:IsServer() then warn("netInterface.onClient() should be used only on the client! Please use netInterface.onServer()") return end
 	self.remote.OnClientEvent:Connect(callback)
-	return nil
 end
+
 return netInterface
