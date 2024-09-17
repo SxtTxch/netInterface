@@ -21,47 +21,47 @@ local netInterface = require(ReplicatedStorage.Networking_Lib.Net_Object)
 
 ### **Creating a New Network Interface**
 ```lua
-local newInterface = netInterface.new("PlayerPoints")
+local new_interface = net_interface.new("player_points")
 ```
 
 ### **Firing Events to the Server**
 ```lua
-local pointsInterface = netInterface.get("PlayerPoints")
-pointsInterface:fireServer(player, 100)  -- Sends the player's points to the server
+local points_interface = net_interface.get("player_points")
+points_interface:fire_server(player, 100)  -- Sends the player's points to the server
 ```
 
 ### **Firing Events to a Client**
 ```lua
-local pointsInterface = netInterface.get("PlayerPoints")
-pointsInterface:fireClient(player, 100)  -- Sends the points to a specific player
+local points_interface = net_interface.get("player_points")
+points_interface:fire_client(player, 100)  -- Sends the points to a specific player
 ```
 
 ### **Firing Events to All Clients**
 ```lua
-local pointsInterface = netInterface.get("PlayerPoints")
-pointsInterface:fireAllClients(100)  -- Broadcasts points to all clients
+local points_interface = net_interface.get("player_points")
+points_interface:fire_all_clients(100)  -- Broadcasts points to all clients
 ```
 
 ### **Listening for Server-Side Events**
 ```lua
-local pointsInterface = netInterface.get("PlayerPoints")
-pointsInterface:onServer(function(player, points)
+local points_interface = net_interface.get("player_points")
+points_interface:on_server(function(player, points)
     print(player.Name .. " has " .. points .. " points")
 end)
 ```
 
 ### **Listening for Client-Side Events**
 ```lua
-local pointsInterface = netInterface.get("PlayerPoints")
-pointsInterface:onClient(function(points)
+local points_interface = net_interface.get("player_points")
+points_interface:on_client(function(points)
     print("You have " .. points .. " points")
 end)
 ```
 
 ### **Destroying a Network Interface**
 ```lua
-local pointsInterface = netInterface.get("PlayerPoints")
-pointsInterface:Destroy()  -- Cleans up the interface
+local points_interface = net_interface.get("player_points")
+points_interface:destroy()  -- Cleans up the interface
 ```
 
 ## 🧰 API Reference
