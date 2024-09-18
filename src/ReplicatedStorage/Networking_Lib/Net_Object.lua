@@ -1,108 +1,97 @@
 --!strict
-local run_service = game:GetService("RunService")
-local server_script_service = game:GetService("ServerScriptService")
-local replicated_storage = game:GetService("ReplicatedStorage")
+local RunService = game:GetService("RunService")
+local ServerScriptService = game:GetService("ServerScriptService")
+local ReplicatedStorage = game:GetService("ReplicatedStorage")
 
-local networking_lib = script.Parent
-local remotes = require(networking_lib.Remotes)
+local Networking_Lib = script.Parent
+local Remotes = require(Networking_Lib.Remotes)
 
-local connector = networking_lib.Connector
+local Connector = Networking_Lib.Connector
 
---[[ define the type for net_interface_type ]]
-export type net_interface_type = {
-    __index: net_interface_type,
-
-    new: (name: string) -> net_interface_type,
-    get: (name: string) -> net_interface_type?,
-
-    fire_server: (self: net_interface_type, ... any) -> (),
-    fire_client: (self: net_interface_type, client: Player, ... any) -> (),
-    fire_all_clients: (self: net_interface_type, ... any) -> (),
-
-    on_server: (self: net_interface_type, () -> any?) -> (),
-    on_client: (self: net_interface_type, () -> any?) -> (),
-
-    destroy: (self: net_interface_type) -> (),
-    name: string,
-    remote: RemoteEvent,
+-- Define the type for netInterfaceType
+export type netInterfaceType = {
+	__index: netInterfaceType,
+	
+	new: (name: string) -> netInterfaceType,
+	get: (name: string) -> netInterfaceType?,
+	
+	fireServer: (self: netInterfaceType, ... any) -> (),
+	fireClient: (self: netInterfaceType, client : Player, ... any) -> (),
+	fireAllClients: (self: netInterfaceType, ... any) -> (),
+	
+	onServer: (self: netInterfaceType, (...any) -> any?) -> (),
+	onClient: (self: netInterfaceType, (...any) -> any?) -> (),
+	
+	Destroy: (self: netInterfaceType) -> (),
+	name: string,
+	remote : RemoteEvent,
 }
 
-local net_content: {[string]: net_interface_type} = {}
+local netContent: {[string]: netInterfaceType} = {}
 
-local net_interface: net_interface_type = {} :: net_interface_type
-net_interface.__index = net_interface
+local netInterface: netInterfaceType = {} :: netInterfaceType
+netInterface.__index = netInterface
 
---[[ create a new net_interface instance or return an existing one ]]
-function net_interface.new(name: string): net_interface_type
-    for existing_name, _ in net_content do
-        if existing_name == name then
-            return net_content[name]
-        end
-    end
+function netInterface.new(name: string): netInterfaceType
+	
+	for existingName ,_ in netContent do
+		if existingName == name then
+			return netContent[name]
+		end
+	end
+	
+	local netInterfaceObject = setmetatable({}, netInterface) :: any
 
-    local net_interface_object = setmetatable({}, net_interface) :: any
-    net_interface_object.name = name
-    net_content[name] = net_interface_object
+	netInterfaceObject.name = name
 
-    if run_service:IsClient() then
-        local object = connector:InvokeServer(name)
-        net_interface_object = setmetatable(object, net_interface) :: net_interface_type
-    end
-
-    net_interface_object.remote = remotes.new_remote(name)
-
-    return net_interface_object
+	netContent[name] = netInterfaceObject
+	
+	if RunService:IsClient() then
+		local object = Connector:InvokeServer(name)
+		netInterfaceObject = setmetatable(object, netInterface) :: netInterfaceType
+	end
+	
+	netInterfaceObject.remote = Remotes.newRemote(name)
+	
+	return netInterfaceObject
 end
 
-if run_service:IsServer() then
-    connector.OnServerInvoke = function(_, name: string)
-        local new_interface = net_interface.new(name)
-        return new_interface
-    end
+if RunService:IsServer() then
+	Connector.OnServerInvoke = function(_, name : string)
+		local newInterface = netInterface.new(name)
+		return newInterface
+	end
 end
 
---[[ retrieve an existing net_interface instance by name ]]
-function net_interface.get(name: string): net_interface_type?
-    return net_interface.new(name) or nil
+function netInterface.get(name: string): netInterfaceType?
+	return netInterface.new(name) or nil
 end
 
---[[ fire an event to the server ]]
-function net_interface:fire_server(...)
-    self.remote:FireServer(...)
+function netInterface:fireServer(...)
+	self.remote:FireServer(...)
 end
 
---[[ fire an event to a specific client ]]
-function net_interface:fire_client(client, ...)
-    self.remote:FireClient(client, ...)
+function netInterface:fireClient(client, ...)
+	self.remote:FireClient(client, ...)
 end
 
---[[ fire an event to all clients ]]
-function net_interface:fire_all_clients(...)
-    self.remote:FireAllClients(...)
+function netInterface:fireAllClients(...)
+	self.remote:FireAllClients(...)
 end
 
---[[ destroy the net_interface instance and clean up resources ]]
-function net_interface:destroy()
-    self.remote:Destroy()
-    net_content[self.name] = nil
+function netInterface:Destroy()
+	self.remote:Destroy()
+	netContent[self.name] = nil
 end
 
---[[ connect a callback to handle server-side events ]]
-function net_interface:on_server(callback)
-    if run_service:IsClient() then
-        warn("net_interface:on_server() should be used only on the server! Please use net_interface:on_client()")
-        return
-    end
-    self.remote.OnServerEvent:Connect(callback)
+function netInterface:onServer(callback)
+	if RunService:IsClient() then warn("netInterface.onServer() should be used only on the server! Please use netInterface.onClient()") return end
+	self.remote.OnServerEvent:Connect(callback)
 end
 
---[[ connect a callback to handle client-side events ]]
-function net_interface:on_client(callback)
-    if run_service:IsServer() then
-        warn("net_interface:on_client() should be used only on the client! Please use net_interface:on_server()")
-        return
-    end
-    self.remote.OnClientEvent:Connect(callback)
+function netInterface:onClient(callback)
+	if RunService:IsServer() then warn("netInterface.onClient() should be used only on the client! Please use netInterface.onServer()") return end
+	self.remote.OnClientEvent:Connect(callback)
 end
 
-return net_interface
+return netInterface
